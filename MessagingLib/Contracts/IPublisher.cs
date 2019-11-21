@@ -5,6 +5,6 @@ namespace MessagingLib.Contracts
 {
     public interface IPublisher : IDisposable
     {
-        Task SendAsync<T>(T message, DateTime? expireMessage = null, DateTime? scheduleDelivery = null);
+        Task SendAsync<T>(T message, DateTime? expireMessage = null);
     }
 }

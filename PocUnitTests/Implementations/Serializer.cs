@@ -12,7 +12,7 @@ namespace PocUnitTests.Implementations
 
         public string Serialize<T>(T obj)
         {
-            return JSON.Serialize(obj);
+            return JSON.Serialize(obj, options: Options.IncludeInherited);
         }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using MessagingLib.Contracts;
 using RabbitMQ.Client;
 using System;
-using System.Collections.Generic;
-using System.Dynamic;
 using System.Text;
 using System.Threading.Tasks;
 using static MessagingLib.Implementation.StaticDefinitions;
@@ -13,14 +11,11 @@ namespace MessagingLib.Implementation
     {
         private readonly IConnection _connectionWithBroker;
         private readonly string _exchange;
-        private readonly IDictionary<string, object> _args;
         private readonly ISerializer _serializer;
 
         public Publisher(IBrokerConfiguration configurations, ISerializer serialize)
         {
             _exchange = configurations.TopicName;
-            _args = new ExpandoObject();
-            _args.Add(RabbitArgTypeName, RabbitArgType);
             _serializer = serialize;
 
 
@@ -57,14 +52,14 @@ namespace MessagingLib.Implementation
             }
         }
 
-        public Task SendAsync<T>(T message, DateTime? expireMessage = null, DateTime? scheduleDelivery = null)
+        public Task SendAsync<T>(T message, DateTime? expireMessage = null)
         {
             var taskResult = new Task(() =>
             {
                 using (var channel = _connectionWithBroker.CreateModel())
                 {
-                    channel.ExchangeDeclare(exchange: _exchange, type: RabbitScheduleTypeName, arguments: _args);
-                    var brokerMessage = BrokerMessageGenarate(message, channel.CreateBasicProperties(), expireMessage, scheduleDelivery);
+                    channel.ExchangeDeclare(exchange: _exchange, type: RabbitArgType);
+                    var brokerMessage = BrokerMessageGenarate(message, channel.CreateBasicProperties(), expireMessage);
                     channel.BasicPublish(_exchange, brokerMessage.routingKey, brokerMessage.properties, brokerMessage.body);
                 }
             });
@@ -74,7 +69,7 @@ namespace MessagingLib.Implementation
             return taskResult;
         }
 
-        private BrokerMessage BrokerMessageGenarate<T>(T message, IBasicProperties props, DateTime? expired = null, DateTime? schedule = null)
+        private BrokerMessage BrokerMessageGenarate<T>(T message, IBasicProperties props, DateTime? expired = null)
         {
             var name = typeof(T).Name;
             string jsonMessage = _serializer.Serialize(message);
@@ -86,14 +81,6 @@ namespace MessagingLib.Implementation
                 body = Encoding.UTF8.GetBytes(jsonMessage)
             };
 
-            double delay = 0;
-
-
-            if (schedule != null)
-                delay = (((DateTime)schedule).ToUniversalTime().Subtract(DateTime.UtcNow)).TotalMilliseconds;
-
-            brokerMessage.properties.Headers = new ExpandoObject();
-            brokerMessage.properties.Headers.Add(RabbitHeaderMesageDelay, ((Int64)delay).ToString("d"));
             brokerMessage.properties.Type = name;
 
             if (expired != null)

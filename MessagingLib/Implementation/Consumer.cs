@@ -3,7 +3,6 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Text;
 using static MessagingLib.Implementation.StaticDefinitions;
@@ -11,13 +10,14 @@ using static MessagingLib.Implementation.StaticDefinitions;
 namespace MessagingLib.Implementation
 {
     public class Consumer<IRequest, INotification> : IConsumer<IRequest, INotification>, IDisposable
+        where IRequest : Contracts.IRequest
+        where INotification : Contracts.INotification
     {
 
         private readonly IConnection _connectionWithBroker;
         private readonly IList<IModel> _channels;
         private readonly string _exchange;
         private readonly string _subscribeName;
-        private readonly IDictionary<string, object> _args;
         private readonly string[] _routingKeys;
         private readonly Dictionary<Type, string> _messageTypeAddresses = new Dictionary<Type, string>();
         private readonly ISerializer _serializer;
@@ -27,8 +27,6 @@ namespace MessagingLib.Implementation
         {
             _exchange = configurations.TopicName;
             _subscribeName = configurations.SubscribeName;
-            _args = new ExpandoObject();
-            _args.Add(RabbitArgTypeName, RabbitArgType);
             _serializer = serialize;
 
 
@@ -74,9 +72,9 @@ namespace MessagingLib.Implementation
         public void OnMessage(Action<object> callback)
         {
             var channel = _connectionWithBroker.CreateModel();
-            channel.ExchangeDeclare(exchange: _exchange, type: RabbitScheduleTypeName, arguments: _args);
+            channel.ExchangeDeclare(exchange: _exchange, type: RabbitArgType);
 
-            var queueName = channel.QueueDeclare(queue:_subscribeName).QueueName;
+            var queueName = channel.QueueDeclare(queue:_subscribeName, durable: true, exclusive: false, autoDelete: false).QueueName;
 
             foreach (var bindingKey in _routingKeys)
             {

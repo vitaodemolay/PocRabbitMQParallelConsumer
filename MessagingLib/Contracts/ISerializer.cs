@@ -1,4 +1,6 @@
-﻿namespace MessagingLib.Contracts
+﻿using System;
+
+namespace MessagingLib.Contracts
 {
     public interface ISerializer
     {

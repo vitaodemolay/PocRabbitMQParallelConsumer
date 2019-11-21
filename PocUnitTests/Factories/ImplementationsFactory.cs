@@ -12,12 +12,12 @@ namespace PocUnitTests.Factories
         {
             return new BrokerConfiguration
             {
-                HostName = "160.20.88.13",
-                UserName = "vmrc",
-                Password = "vmrc04",
-                Port = 7001,
+                HostName = "localhost",
+                UserName = "guest",
+                Password = "guest",
+                Port = 5672,
                 TopicName = "PocRabbitMQParallelConsumer",
-                SubscribeName = "PocRabbitMQParallelConsumer_01",
+                SubscribeName = "PocRabbitMQParallelConsumer",
                 VirtualHost = "",
             };
         }

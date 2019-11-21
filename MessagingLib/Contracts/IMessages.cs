@@ -1,6 +1,6 @@
 using System;
 
-namespace PocUnitTests.Implementations.Contracts
+namespace MessagingLib.Contracts
 {
     public interface IRequest : IMessage
     {

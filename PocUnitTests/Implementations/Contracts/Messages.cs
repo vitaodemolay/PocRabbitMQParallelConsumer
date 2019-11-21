@@ -1,3 +1,4 @@
+using MessagingLib.Contracts;
 using System;
 
 namespace PocUnitTests.Implementations.Contracts
@@ -18,6 +19,11 @@ namespace PocUnitTests.Implementations.Contracts
     {
         public int Index { get; set; }
         public string Name { get; set; }
+
+        public TestRequest()
+            :base()
+        { }
+
 
         public TestRequest(int index, string name)
          : base()
