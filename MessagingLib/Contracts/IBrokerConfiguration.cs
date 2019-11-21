@@ -9,5 +9,7 @@
         string Password { get; set; }
         string VirtualHost { get; set; }
         string SubscribeName { get; set; }
+        string ConnectionString { get; set; }
+        string DabaseName { get; set; }
     }
 }

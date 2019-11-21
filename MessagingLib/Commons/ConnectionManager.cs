@@ -46,8 +46,11 @@ namespace MessagingLib.Commons
                 BsonClassMap.RegisterClassMap<IMessage>(model =>
                 {
                     model.AutoMap();
-                    model.SetIdMember(model.GetMemberMap(m => new { m.IdMessage, m.TimeStamping }));
+                    model.SetIdMember(model.GetMemberMap(m => m.IdMessage));
                 });
+
+
+
         }
 
     }

@@ -19,6 +19,8 @@ namespace PocUnitTests.Factories
                 TopicName = "PocRabbitMQParallelConsumer",
                 SubscribeName = "PocRabbitMQParallelConsumer",
                 VirtualHost = "",
+                ConnectionString = "mongodb://admin:password@localhost:27017/admin",
+                DabaseName = "PocRabbitMQ"
             };
         }
 
