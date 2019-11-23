@@ -10,8 +10,6 @@ using static MessagingLib.Implementation.StaticDefinitions;
 namespace MessagingLib.Implementation
 {
     public class Consumer<IRequest, INotification> : IConsumer<IRequest, INotification>, IDisposable
-        where IRequest : Contracts.IRequest
-        where INotification : Contracts.INotification
     {
 
         private readonly IConnection _connectionWithBroker;

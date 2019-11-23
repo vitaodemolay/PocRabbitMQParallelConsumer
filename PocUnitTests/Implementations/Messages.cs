@@ -1,7 +1,8 @@
-using MessagingLib.Contracts;
+
+using PocUnitTests.Implementations.Contracts;
 using System;
 
-namespace PocUnitTests.Implementations.Contracts
+namespace PocUnitTests.Implementations
 {
     public abstract class BaseMessage : IMessage
     {

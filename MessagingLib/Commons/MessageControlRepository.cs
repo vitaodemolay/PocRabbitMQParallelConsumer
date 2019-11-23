@@ -1,5 +1,5 @@
 ﻿using MessagingLib.Commons.Contracts;
-using MessagingLib.Contracts;
+using MessagingLib.Domain;
 using MongoDB.Driver;
 using System;
 using System.Threading.Tasks;
@@ -12,12 +12,12 @@ namespace MessagingLib.Commons
         private const string collectionName = "Messages";
         private readonly IConnectionManager _connectionManager;
 
-        private IMongoCollection<IMessage> _dbSet
+        private IMongoCollection<Wrapper> _dbSet
         {
             get
             {
                 var dbMongo = _connectionManager.GetDatabaseConnection;
-                return dbMongo.GetCollection<IMessage>(collectionName);
+                return dbMongo.GetCollection<Wrapper>(collectionName);
             }
         }
         
@@ -32,15 +32,15 @@ namespace MessagingLib.Commons
             _connectionManager.Dispose();
         }
 
-        public async Task<IMessage> GetMessage(Guid messageId, string timestamp)
+        public async Task<Wrapper> GetWrapper(Guid messageId, string timestamp)
         {
-            var messages = await _dbSet.FindAsync(f => f.IdMessage == messageId && f.TimeStamping == timestamp);
-            return messages.FirstOrDefault();
+            var wrappers = await _dbSet.FindAsync(f => f.IdMessage == messageId && f.TimeStamping == timestamp);
+            return wrappers.FirstOrDefault();
         }
 
-        public async Task SetMessage(IMessage message)
+        public async Task SetWrapper(Wrapper wrapper)
         {
-            await _dbSet.InsertOneAsync(message);
+            await _dbSet.InsertOneAsync(wrapper);
         }
     }
 }

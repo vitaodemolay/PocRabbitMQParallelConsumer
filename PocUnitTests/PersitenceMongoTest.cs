@@ -1,8 +1,8 @@
-﻿using MessagingLib.Commons;
-using MessagingLib.Contracts;
+﻿using System;
+using MessagingLib.Commons;
+using MessagingLib.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PocUnitTests.Factories;
-using PocUnitTests.Implementations.Contracts;
 
 
 namespace PocUnitTests
@@ -17,9 +17,12 @@ namespace PocUnitTests
             var connection = new ConnectionManager(configs.ConnectionString, configs.DabaseName);
             var messageRepository = new MessageControlRepository(connection);
 
-            IRequest messageTest = new TestRequest(1, "José Anibal");
+            var wrapper = new Wrapper{
+                IdMessage = Guid.NewGuid(),
+                TimeStamping = DateTime.Now.ToString("O"),
+            };
 
-            messageRepository.SetMessage(messageTest).Wait();
+            messageRepository.SetWrapper(wrapper).Wait();
 
         }
     }

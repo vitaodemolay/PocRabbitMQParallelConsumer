@@ -1,6 +1,7 @@
 using System;
+using MongoDB.Bson.Serialization.Attributes;
 
-namespace MessagingLib.Contracts
+namespace PocUnitTests.Implementations.Contracts
 {
     public interface IRequest : IMessage
     {
@@ -14,7 +15,10 @@ namespace MessagingLib.Contracts
 
     public interface IMessage
     {
+        [BsonId()]
         Guid IdMessage { get; set; }
+
+        
         string TimeStamping { get; set; }
     }
 }

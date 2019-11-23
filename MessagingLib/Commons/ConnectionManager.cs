@@ -1,5 +1,5 @@
 ﻿using MessagingLib.Commons.Contracts;
-using MessagingLib.Contracts;
+using MessagingLib.Domain;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
@@ -42,15 +42,11 @@ namespace MessagingLib.Commons
 
         private void OnModelBuilder()
         {
-            if (!BsonClassMap.IsClassMapRegistered(typeof(IMessage)))
-                BsonClassMap.RegisterClassMap<IMessage>(model =>
+            if (!BsonClassMap.IsClassMapRegistered(typeof(Wrapper)))
+                BsonClassMap.RegisterClassMap<Wrapper>(model =>
                 {
                     model.AutoMap();
-                    model.SetIdMember(model.GetMemberMap(m => m.IdMessage));
                 });
-
-
-
         }
 
     }

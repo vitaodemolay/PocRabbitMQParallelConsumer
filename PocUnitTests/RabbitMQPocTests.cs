@@ -1,6 +1,6 @@
-using MessagingLib.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PocUnitTests.Factories;
+using PocUnitTests.Implementations;
 using PocUnitTests.Implementations.Contracts;
 using System.Collections.Generic;
 using System.Threading;
