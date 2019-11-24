@@ -6,7 +6,7 @@ namespace MessagingLib.Commons.Contracts
 {
     public interface IMessageControlRepository : IDisposable
     {
-        Task<Wrapper> GetWrapper(Guid messageId, string timestamp);
-        Task SetWrapper(Wrapper wrapper); 
+        Wrapper GetWrapper(Guid messageId, string timestamp);
+        void SetWrapper(Wrapper wrapper); 
     }
 }

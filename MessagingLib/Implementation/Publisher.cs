@@ -1,9 +1,10 @@
 ﻿using MessagingLib.Contracts;
 using RabbitMQ.Client;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using static MessagingLib.Implementation.StaticDefinitions;
+using static MessagingLib.Commons.StaticDefinitions;
 
 namespace MessagingLib.Implementation
 {
@@ -82,6 +83,9 @@ namespace MessagingLib.Implementation
             };
 
             brokerMessage.properties.Type = name;
+            brokerMessage.properties.MessageId = Guid.NewGuid().ToString();
+            brokerMessage.properties.Headers = new Dictionary<string, object>();
+            brokerMessage.properties.Headers.Add("Timestamp", DateTime.Now.ToString("O"));
 
             if (expired != null)
             {

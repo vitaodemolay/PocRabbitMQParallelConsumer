@@ -22,7 +22,7 @@ namespace PocUnitTests
                 TimeStamping = DateTime.Now.ToString("O"),
             };
 
-            messageRepository.SetWrapper(wrapper).Wait();
+            messageRepository.SetWrapper(wrapper);
 
         }
     }

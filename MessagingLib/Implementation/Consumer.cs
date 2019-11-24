@@ -1,11 +1,14 @@
-﻿using MessagingLib.Contracts;
+﻿using MessagingLib.Commons;
+using MessagingLib.Commons.Contracts;
+using MessagingLib.Contracts;
+using MessagingLib.Domain;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using static MessagingLib.Implementation.StaticDefinitions;
+using static MessagingLib.Commons.StaticDefinitions;
 
 namespace MessagingLib.Implementation
 {
@@ -19,14 +22,14 @@ namespace MessagingLib.Implementation
         private readonly string[] _routingKeys;
         private readonly Dictionary<Type, string> _messageTypeAddresses = new Dictionary<Type, string>();
         private readonly ISerializer _serializer;
-
+        private readonly IMessageControlRepository _messageRepository;
 
         public Consumer(Type assemblyBase, IBrokerConfiguration configurations, ISerializer serialize)
         {
             _exchange = configurations.TopicName;
             _subscribeName = configurations.SubscribeName;
             _serializer = serialize;
-
+            _messageRepository = FactoryMessageControlRecovery.GetMessageRepositoryInstance(configurations.ConnectionString, configurations.DabaseName);
 
             var connectionFactory = new ConnectionFactory
             {
@@ -72,7 +75,7 @@ namespace MessagingLib.Implementation
             var channel = _connectionWithBroker.CreateModel();
             channel.ExchangeDeclare(exchange: _exchange, type: RabbitArgType);
 
-            var queueName = channel.QueueDeclare(queue:_subscribeName, durable: true, exclusive: false, autoDelete: false).QueueName;
+            var queueName = channel.QueueDeclare(queue: _subscribeName, durable: true, exclusive: false, autoDelete: false).QueueName;
 
             foreach (var bindingKey in _routingKeys)
             {
@@ -85,17 +88,48 @@ namespace MessagingLib.Implementation
 
             consumer.Received += (model, ea) =>
             {
-                var type = ea.BasicProperties.Type;
-                var body = Encoding.UTF8.GetString(ea.Body);
-
-                var message = Deserialize(body, type);
-                callback.Invoke(message);
+                var persistResult = PersistUniqueWrapper(ea);
+                callback.Invoke(persistResult.Message);
             };
             channel.BasicConsume(queue: queueName,
                                  autoAck: true,
                                  consumer: consumer);
 
             _channels.Add(channel);
+        }
+
+        private PersistUniqueWrapperResult PersistUniqueWrapper(BasicDeliverEventArgs deliverEventArgs)
+        {
+            var result = new PersistUniqueWrapperResult
+            {
+                IsPersisted = false,
+            };
+
+            Guid idMessage = Guid.Empty;
+
+            if(!Guid.TryParse(deliverEventArgs.BasicProperties.MessageId, out idMessage)){
+                throw new Exception("Null reference Message ID");
+            }
+
+            var wrapper = new Wrapper
+            {
+                IdMessage = idMessage,
+                TimeStamping = deliverEventArgs.BasicProperties.Headers.FirstOrDefault(f => f.Key == "Timestamp").Value.ToString(),
+                TypeMessage = deliverEventArgs.BasicProperties.Type,
+                BodyMessage = Encoding.UTF8.GetString(deliverEventArgs.Body)
+            };
+            try
+            {
+                _messageRepository.SetWrapper(wrapper);
+                result.Message = Deserialize(wrapper.BodyMessage, wrapper.TypeMessage);
+                result.IsPersisted = true;
+            }
+            catch (System.Exception)
+            {
+            
+            }
+
+            return result;
         }
 
         private object Deserialize(string messageBody, string type)

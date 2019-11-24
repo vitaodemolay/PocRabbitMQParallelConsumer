@@ -1,4 +1,4 @@
-﻿namespace MessagingLib.Implementation
+﻿namespace MessagingLib.Commons
 {
     internal static class StaticDefinitions
     {

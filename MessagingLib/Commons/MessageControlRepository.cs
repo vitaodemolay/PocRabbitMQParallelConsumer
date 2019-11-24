@@ -2,7 +2,6 @@
 using MessagingLib.Domain;
 using MongoDB.Driver;
 using System;
-using System.Threading.Tasks;
 
 namespace MessagingLib.Commons
 {
@@ -32,15 +31,15 @@ namespace MessagingLib.Commons
             _connectionManager.Dispose();
         }
 
-        public async Task<Wrapper> GetWrapper(Guid messageId, string timestamp)
+        public Wrapper GetWrapper(Guid messageId, string timestamp)
         {
-            var wrappers = await _dbSet.FindAsync(f => f.IdMessage == messageId && f.TimeStamping == timestamp);
+            var wrappers = _dbSet.Find(f => f.IdMessage == messageId && f.TimeStamping == timestamp);
             return wrappers.FirstOrDefault();
         }
 
-        public async Task SetWrapper(Wrapper wrapper)
+        public void SetWrapper(Wrapper wrapper)
         {
-            await _dbSet.InsertOneAsync(wrapper);
+            _dbSet.InsertOne(wrapper);
         }
     }
 }

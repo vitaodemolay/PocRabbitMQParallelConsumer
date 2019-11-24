@@ -16,5 +16,6 @@ namespace MessagingLib.Domain
 
         [BsonIgnoreIfNull]
         public string BodyMessage { get; set; }
+
     }
 }
