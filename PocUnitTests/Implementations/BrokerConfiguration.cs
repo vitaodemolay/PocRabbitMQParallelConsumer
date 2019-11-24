@@ -12,6 +12,5 @@ namespace PocUnitTests.Implementations
         public string VirtualHost { get; set; }
         public string SubscribeName { get; set; }
         public string ConnectionString { get; set; }
-        public string DabaseName { get; set; }
     }
 }

@@ -1,6 +1,7 @@
+using System;
 using MessagingLib.Contracts;
 
-namespace PublisherSystemPoc.Commons
+namespace CosumerSystemPoc.Commons
 {
     internal class BrokerConfiguration : IBrokerConfiguration
     {
@@ -12,6 +13,5 @@ namespace PublisherSystemPoc.Commons
         public string VirtualHost { get; set; }
         public string SubscribeName { get; set; }
         public string ConnectionString { get; set; }
-        
     }
 }

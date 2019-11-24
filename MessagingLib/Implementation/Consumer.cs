@@ -29,7 +29,7 @@ namespace MessagingLib.Implementation
             _exchange = configurations.TopicName;
             _subscribeName = configurations.SubscribeName;
             _serializer = serialize;
-            _messageRepository = FactoryMessageControlRecovery.GetMessageRepositoryInstance(configurations.ConnectionString, configurations.DabaseName);
+            _messageRepository = FactoryMessageControlRecovery.GetMessageRepositoryInstance(configurations.ConnectionString, configurations.SubscribeName);
 
             var connectionFactory = new ConnectionFactory
             {

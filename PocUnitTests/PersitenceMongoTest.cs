@@ -14,7 +14,7 @@ namespace PocUnitTests
         public void TestMethod1()
         {
             var configs = ImplementationsFactory.GetBrokerConfigurationInstance();
-            var connection = new ConnectionManager(configs.ConnectionString, configs.DabaseName);
+            var connection = new ConnectionManager(configs.ConnectionString, configs.SubscribeName);
             var messageRepository = new MessageControlRepository(connection);
 
             var wrapper = new Wrapper{
