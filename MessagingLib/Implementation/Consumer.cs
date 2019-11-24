@@ -89,7 +89,10 @@ namespace MessagingLib.Implementation
             consumer.Received += (model, ea) =>
             {
                 var persistResult = PersistUniqueWrapper(ea);
-                callback.Invoke(persistResult.Message);
+                if (persistResult.IsPersisted)
+                {
+                    callback.Invoke(persistResult.Message);
+                }
             };
             channel.BasicConsume(queue: queueName,
                                  autoAck: true,
@@ -107,7 +110,8 @@ namespace MessagingLib.Implementation
 
             Guid idMessage = Guid.Empty;
 
-            if(!Guid.TryParse(deliverEventArgs.BasicProperties.MessageId, out idMessage)){
+            if (!Guid.TryParse(deliverEventArgs.BasicProperties.MessageId, out idMessage))
+            {
                 throw new Exception("Null reference Message ID");
             }
 
@@ -126,7 +130,7 @@ namespace MessagingLib.Implementation
             }
             catch (System.Exception)
             {
-            
+
             }
 
             return result;
