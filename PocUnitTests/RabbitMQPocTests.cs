@@ -36,7 +36,6 @@ namespace PocUnitTests
             for (int i = 0; i < Names.Length; i++)
             {
                 publisher.SendAsync(new TestRequest(i, Names[i])).Wait();
-                break;
             }
 
             while (true)

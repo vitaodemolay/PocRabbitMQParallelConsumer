@@ -114,7 +114,7 @@ namespace MessagingLib.Implementation
             var wrapper = new Wrapper
             {
                 IdMessage = idMessage,
-                TimeStamping = deliverEventArgs.BasicProperties.Headers.FirstOrDefault(f => f.Key == "Timestamp").Value.ToString(),
+                TimeStamping = Encoding.UTF8.GetString((byte[])deliverEventArgs.BasicProperties.Headers.FirstOrDefault(f => f.Key == "Timestamp").Value),
                 TypeMessage = deliverEventArgs.BasicProperties.Type,
                 BodyMessage = Encoding.UTF8.GetString(deliverEventArgs.Body)
             };
