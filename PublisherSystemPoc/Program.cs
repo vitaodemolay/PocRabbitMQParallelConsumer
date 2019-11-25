@@ -30,7 +30,7 @@ namespace PublisherSystemPoc
                     {
                         SenderName = _nome,
                         BodyMessage = $"Esta Mensagem é a numero {i}",
-                    });
+                    }).Wait();
                 }
 
                 Console.WriteLine($"Concluido. Foram enviadas {_qtd} mensagens");
