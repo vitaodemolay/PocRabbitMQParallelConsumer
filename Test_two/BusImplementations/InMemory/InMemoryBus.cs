@@ -45,5 +45,20 @@ namespace PocMessageria.BusImplementations.InMemory
             foreach (var handler in handlers.Where(h => handlerType.IsAssignableFrom(h)))
                 ((IHandler<T>)this.dependencyResolver.Get(handler)).Handle((T)message);
         }
+
+        public void Subscribe<T>() where T : IEvent
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Unsubscribe<T>() where T : IEvent
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Receive<T>() where T : ICommand, INotification
+        {
+            throw new NotImplementedException();
+        }
     }
 }
