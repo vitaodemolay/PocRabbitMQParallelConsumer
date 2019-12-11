@@ -52,7 +52,7 @@ namespace PocMessageria.BusImplementations.InMemory
 
         public void Unsubscribe<T>(IHandler<T> handler) where T : IEvent
         {
-            AddHandler(handler);
+            _handlers.Remove(typeof(T));
         }
 
         public void Receive<T>(IHandler<T> handler) where T : IQueuedMessage
