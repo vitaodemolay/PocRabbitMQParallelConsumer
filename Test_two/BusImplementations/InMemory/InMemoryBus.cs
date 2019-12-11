@@ -1,26 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using PocMessageria.Infrastructure.Bus;
 using PocMessageria.Infrastructure.Handler;
-using PocMessageria.Infrastructure.IoC;
 using PocMessageria.Infrastructure.Messages;
 
 namespace PocMessageria.BusImplementations.InMemory
 {
     public class InMemoryBus : IBus
     {
-        private readonly IList<Type> handlers = new List<Type>();
-        private readonly IDependencyResolver dependencyResolver;
+        private readonly IDictionary<Type, object> _handlers;
 
-        public InMemoryBus(IDependencyResolver dependencyResolver)
+        public InMemoryBus()
         {
-            this.dependencyResolver = dependencyResolver;
-        }
-
-        public void RegisterHandler<T>()
-        {
-            this.handlers.Add(typeof(T));
+            _handlers = new Dictionary<Type, object>();
         }
 
         public void Send<T>(T command) where T : ICommand
@@ -40,25 +32,32 @@ namespace PocMessageria.BusImplementations.InMemory
 
         private void Invoke<T>(IMessageBase message) where T : IMessageBase
         {
-            var handlerType = typeof(IHandler<>).MakeGenericType(typeof(T));
+            object handler = null;
 
-            foreach (var handler in handlers.Where(h => handlerType.IsAssignableFrom(h)))
-                ((IHandler<T>)this.dependencyResolver.Get(handler)).Handle((T)message);
+            if (_handlers.TryGetValue(typeof(T), out handler))
+            {
+                ((IHandler<T>)handler).Handle((T)message);
+            }
         }
 
-        public void Subscribe<T>() where T : IEvent
+        private void AddHandler<T>(IHandler<T> handler) where T : IMessageBase
         {
-            throw new NotImplementedException();
+            _handlers.Add(typeof(T), handler);
         }
 
-        public void Unsubscribe<T>() where T : IEvent
+        public void Subscribe<T>(IHandler<T> handler) where T : IEvent
         {
-            throw new NotImplementedException();
+            AddHandler(handler);
         }
 
-        public void Receive<T>() where T : ICommand, INotification
+        public void Unsubscribe<T>(IHandler<T> handler) where T : IEvent
         {
-            throw new NotImplementedException();
+            AddHandler(handler);
+        }
+
+        public void Receive<T>(IHandler<T> handler) where T : IQueuedMessage
+        {
+            AddHandler(handler);
         }
     }
 }
